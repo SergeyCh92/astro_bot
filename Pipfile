@@ -1,0 +1,21 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+aiogram = "==2.25.1"
+aiohttp = "==3.8.5"
+asyncpg = "==0.26.0"
+deep-translator = "==1.11.4"
+pydantic = "==1.*"
+apscheduler = "==3.10.3"
+sqlalchemy = "==2.0.6"
+
+[dev-packages]
+black = "*"
+flake8 = "*"
+pylint = "*"
+
+[requires]
+python_version = "3.11"

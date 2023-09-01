@@ -6,10 +6,11 @@ name = "pypi"
 [packages]
 aiogram = "==2.25.1"
 aiohttp = "==3.8.5"
+apscheduler = "==3.10.3"
 asyncpg = "==0.26.0"
 deep-translator = "==1.11.4"
+Pillow = "==9.5.0"
 pydantic = "==1.*"
-apscheduler = "==3.10.3"
 sqlalchemy = "==2.0.6"
 
 [dev-packages]

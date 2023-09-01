@@ -12,5 +12,6 @@ async def get_astronaut_names_in_space(callback: types.CallbackQuery):
         else:
             astronauts_info = get_info_about_astronauts(data)
             await callback.message.answer(astronauts_info)
+            await callback.message.delete()
     finally:
         await callback.answer()

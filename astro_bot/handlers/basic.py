@@ -11,10 +11,11 @@ from astro_bot.utils import create_inline_keyboard
 async def start(message: types.Message, state: FSMContext):
     await state.finish()
     keyboard = create_inline_keyboard(
-        ["Астрономическое изображение дня 🌌", "Инфорация о людях в космосе 👩‍🚀"],
-        ["get_apod_date", "get_astronauts_info"],
+        ["Астрономическое изображение дня 🌌", "Инфорация о людях в космосе 👩‍🚀", "Фотографии марсоходов 🛰"],
+        ["get_apod_date", "get_astronauts_info", "choose_mars_rover"],
     )
     await message.answer(text="Выберите интересующую вас опцию из списка ниже.", reply_markup=keyboard)
+    await message.delete()
 
 
 async def send_description(message: types.Message, state: FSMContext):
@@ -26,4 +27,4 @@ async def cancel_newsletter(message: types.Message, state: FSMContext, session: 
         await DbClient.remove_user_from_newsletter(message.from_user.id, session)
         await message.answer(TextStorage.REMOVE_TO_MAILING_LIST)
     finally:
-        session.close()
+        await session.close()

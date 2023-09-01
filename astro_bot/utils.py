@@ -1,9 +1,11 @@
 import datetime
+import io
 import logging
 
 import aiohttp
 from aiogram import Bot, types
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from PIL import Image
 
 import astro_bot.handlers.apod as apod
 from astro_bot.database.db_client import DbClient
@@ -95,3 +97,11 @@ async def create_scheduler(bot: Bot):
     scheduler = AsyncIOScheduler()
     scheduler.add_job(apod.send_apod_newsletter, "cron", hour=21, minute=21, second=0, args=[bot])
     scheduler.start()
+
+
+async def validate_image(image_bytes: bytes) -> bool:
+    # валидными считаем изображения с относительно высоким разрешением
+    image = Image.open(io.BytesIO(image_bytes))
+    # return image.width + image.height >= 1400
+    return image.width + image.height >= 1400
+    # return image.width >= 1024 and image.height >= 1024

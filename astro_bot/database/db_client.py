@@ -1,7 +1,8 @@
-from sqlalchemy import delete, insert, select
+from sqlalchemy import delete, insert, select, update
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
-from astro_bot.database.tables import Base, User
+from astro_bot.database.tables import Base, Rovers, User
+from astro_bot.models.rovers import Rover
 from astro_bot.settings import BotSettings
 
 
@@ -37,5 +38,19 @@ class DbClient:
     @staticmethod
     async def remove_user_from_newsletter(user_id: int, session: AsyncSession):
         query = delete(User).where(User.id == user_id)
+        await session.execute(query)
+        await session.commit()
+
+    @staticmethod
+    async def get_rover_data(rover_name: str, session: AsyncSession) -> Rovers:
+        query = select(Rovers).where(Rovers.name == rover_name)
+        row_result = await session.execute(query)
+        result = row_result.scalar_one_or_none()
+        return result
+
+    @staticmethod
+    async def record_rover_data(rover: Rover, session: AsyncSession):
+        data = rover.data.dict()
+        query = update(Rovers).values(data=data).where(Rovers.name == rover.name)
         await session.execute(query)
         await session.commit()

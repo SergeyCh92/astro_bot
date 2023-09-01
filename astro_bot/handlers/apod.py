@@ -10,7 +10,7 @@ from astro_bot.database.db_client import DbClient
 from astro_bot.injections.database_session import inject_db_session
 from astro_bot.settings import BotSettings
 from astro_bot.texts import TextStorage
-from astro_bot.utils import check_is_valid_date, create_inline_keyboard, get_content, make_get_request
+from astro_bot.utils import check_is_valid_date, create_inline_keyboard, make_get_request
 
 settings = BotSettings()
 
@@ -23,6 +23,7 @@ async def request_apod_date(callback: types.CallbackQuery, state: FSMContext):
     keyboard = create_inline_keyboard(["Получить сегодняшнее изображение"], ["get_apod"])
     await callback.message.answer(TextStorage.APOD_DESCRIPTION, reply_markup=keyboard)
     await state.set_state(OrderApod.WAITING_FOR_DATE.state)
+    await callback.message.delete()
     await callback.answer()
 
 
@@ -41,7 +42,7 @@ async def get_apod_for_today_date(
         params = {"api_key": settings.nasa_token.get_secret_value()}
         text_keyboard = create_inline_keyboard(["Перевести текст"], ["translate_message_text"])
 
-        data = await make_get_request("https://api.nasa.gov/planetary/apod", params)
+        data = await make_get_request(settings.apod_url, params)
         url_button = types.InlineKeyboardButton("Изображение в максимальном качестве", data["hdurl"])
         caption_keyboard.add(url_button)
         await callback.message.answer_photo(photo=data["url"], caption=data["title"], reply_markup=caption_keyboard)
@@ -85,7 +86,7 @@ async def get_apod_for_selected_date(
         params = {"api_key": settings.nasa_token.get_secret_value(), "date": message.text}
         text_keyboard = create_inline_keyboard(["Перевести текст"], ["translate_message_text"])
 
-        data = await make_get_request("https://api.nasa.gov/planetary/apod", params)
+        data = await make_get_request(settings.apod_url, params)
         if data["media_type"] != "image":
             await message.answer(
                 "К сожалению за выбранную дату изображение отсутствует. Попробуйте выбрать другую дату."
@@ -134,7 +135,7 @@ async def send_apod_newsletter(bot: Bot, session: AsyncSession = inject_db_sessi
         params = {"api_key": settings.nasa_token.get_secret_value()}
         text_keyboard = create_inline_keyboard(["Перевести текст"], ["translate_message_text"])
 
-        data = await make_get_request("https://api.nasa.gov/planetary/apod", params)
+        data = await make_get_request(settings.apod_url, params)
         url_button = types.InlineKeyboardButton("Изображение в максимальном качестве", data["hdurl"])
         caption_keyboard.add(url_button)
         for user_id in user_ids:

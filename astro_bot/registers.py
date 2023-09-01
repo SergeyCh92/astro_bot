@@ -10,7 +10,8 @@ from astro_bot.handlers.apod import (
     translate_text,
 )
 from astro_bot.handlers.astronauts import get_astronaut_names_in_space
-from astro_bot.handlers.basic import send_description, start, cancel_newsletter
+from astro_bot.handlers.basic import cancel_newsletter, send_description, start
+from astro_bot.handlers.rovers import OrderMarsPhoto, choose_mars_rover, get_rover_photo
 
 
 def register_handlers_apod(dp: Dispatcher):
@@ -24,3 +25,5 @@ def register_handlers_apod(dp: Dispatcher):
     dp.register_message_handler(get_apod_for_selected_date, state=OrderApod.WAITING_FOR_DATE)
     dp.register_callback_query_handler(get_astronaut_names_in_space, text="get_astronauts_info")
     dp.register_callback_query_handler(add_user_to_newsletter, text="receive_apod_daily")
+    dp.register_callback_query_handler(choose_mars_rover, text="choose_mars_rover", state="*")
+    dp.register_callback_query_handler(get_rover_photo, state=OrderMarsPhoto.WAITING_FOR_PHOTO)
